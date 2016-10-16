@@ -71,6 +71,17 @@ describe 'The parser program' => sub {
     is($rslt[2]->{'name'}{'00/33'},
       1, '> Annotate import');
 
+    $input = "a !>00/33;";
+    @rslt = evalMain('name', $input, ['ImportDirect']);
+    like($rslt[0]->{'name'}{'text:main'},
+      qr/a \[%.*%\];/, 'detected with space and semicolon');
+
+    isnt($rslt[2]->{'name'}{'00/33;'},
+      1, 'rejected semicolon');
+
+    is($rslt[2]->{'name'}{'00/33'},
+      1, 'correct filename without semicolon');
+
   };
 
 };

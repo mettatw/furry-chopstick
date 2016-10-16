@@ -29,9 +29,9 @@ use v5.14;
 # !<template/path
 
 my $pat = qr{
-  (?: \s|^ ) \K    # look-behind non-capture, start without non-space
-  ! ([<>]) (\S+)     # The command we want
-  (?: (?= \s|$ ))  # look-ahead the end of command
+  (?: \s | ^ ) \K    # look-behind non-capture, start without non-space
+  ! ([<>]) ([^\s;:]+)     # The command we want
+  (?: (?= [\s;:] | $ ))  # look-ahead the end of command
 }msx; # x allow comment; s treat as single line; m multiline
 
 sub doParse {
