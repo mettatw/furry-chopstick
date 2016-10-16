@@ -18,6 +18,7 @@
 
 use strict;
 use warnings;
+use v5.14; # say state switch unicode_strings array_base
 
 # Put dependency path in @INC
 use Cwd qw(realpath);

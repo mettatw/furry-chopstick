@@ -18,6 +18,7 @@
 
 use strict;
 use warnings;
+use v5.14;
 
 use File::Basename qw(dirname);
 require(dirname(__FILE__) . '/../bin/furry-chopstick-parser.pl');
@@ -34,15 +35,42 @@ sub evalMain {
 }
 
 describe 'The parser program' => sub {
-  before_each 'Vars' => sub {
-    my $zzz;
+  tests 'Passthru' => sub {
+    my $input = "ccc\n567\n";
+    my @rslt;
+
+    @rslt = evalMain('name', $input, []);
+    is($rslt[0]->{'name'}{'text:main'},
+      $input, 'match passthru');
+
+    @rslt = evalMain('name', "", []);
+    is($rslt[0]->{'name'}{'text:main'},
+      "", 'match passthru empty');
+
+    ok(dies {
+      my @rslt = evalMain('name', $input, ['NonExist']);
+    }, 'die on not found');
   };
 
-  tests 'Passthru if no parser given' => sub {
-    my $input = "ccc\n567\n";
-    my $answer = $input;
-    my @rslt = evalMain('name', $input, []);
-    is($rslt[0]->{'name'}{'text:main'}, $input, 'match passthru');
+  tests 'DirectImport plugin' => sub {
+    my $input = "ccc\n!<00/33\nddd";
+    my @rslt;
+
+    @rslt = evalMain('name', $input, ['ImportDirect']);
+    like($rslt[0]->{'name'}{'text:main'},
+      qr/ccc\n\[%.*%\]\nddd/, '< Keep context');
+
+    is($rslt[2]->{'name'}{'00/33'},
+      1, '< Annotate import');
+
+    $input = "ccc\n!>00/33\nddd";
+    @rslt = evalMain('name', $input, ['ImportDirect']);
+    like($rslt[0]->{'name'}{'text:main'},
+      qr/ccc\n\[%.*%\]\nddd/, '> Keep context');
+
+    is($rslt[2]->{'name'}{'00/33'},
+      1, '> Annotate import');
+
   };
 
 };
