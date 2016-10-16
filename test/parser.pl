@@ -42,7 +42,7 @@ describe 'The parser program' => sub {
     my $input = "ccc\n567\n";
     my $answer = $input;
     my @rslt = evalMain('name', $input, []);
-    is($rslt[0]->{'name'}{'main'}, $input, 'match passthru');
+    is($rslt[0]->{'name'}{'text:main'}, $input, 'match passthru');
   };
 
 };
