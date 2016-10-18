@@ -44,7 +44,7 @@ sub main {
   my %hDependency;
 
   $hContent{'text:main'} = $argInput;
-  $hContent{'out:main'} = '[% DUMMY FIXME %]';
+  $hContent{'out:main'} = "[% INCLUDE $argFileID:text:main %]";
 
   foreach my $parser (@argParsers) {
     require "FurryParser/$parser.pm";

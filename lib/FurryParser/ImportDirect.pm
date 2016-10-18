@@ -23,9 +23,9 @@ use warnings;
 use v5.14;
 
 # Pattern
-# Import and evaluate template:
+# Import and evaluate template: (pass context TO the sub-template)
 # !>template/path
-# Import template but don't evaluate:
+# Import template but don't evaluate: (pull text IN)
 # !<template/path
 
 my $pat = qr{
@@ -37,12 +37,20 @@ my $pat = qr{
 sub doParse {
   my ($rhContent, $rhVariable, $rhDependency) = (@_);
   foreach my $key (grep { $_ =~ /^text:/ } keys %{$rhContent}) {
-    #my $nameUnit = (split(/:/, $key, 2))[1];
+    my $nameUnit = (split(/:/, $key, 2))[1];
     while ($rhContent->{$key} =~ /$pat/g) {
       my $symbol = $1;
       my $fname = $2;
-      substr($rhContent->{$key}, $-[0], $+[0]-$-[0],
-        "[% DUMMY FIXME IMPORT $symbol $fname %]");
+      my $rslt = "";
+      if ($symbol eq "<") {
+        $rslt = "[% insertFn = '$fname' %]"
+        . "[% insertPt = 'out:$nameUnit' %]"
+        . "[% txt.\$insertFn.\$insertPt %]";
+      } else {
+        $rslt = "[% INCLUDE $fname:out:$nameUnit %]";
+      }
+
+      substr($rhContent->{$key}, $-[0], $+[0]-$-[0], $rslt);
       $rhDependency->{$fname} = 1;
     }
   }
