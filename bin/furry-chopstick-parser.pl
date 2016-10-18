@@ -80,11 +80,7 @@ unless (caller) { # If direct invocation of this script
   my $rslt = main $argFileID, $allContent, \@argParsers;
 
   # Write results to target file
-  if ($argOutputFile ne '-') {
-    open my $fdOut, ">", $argOutputFile or die;
-    print {$fdOut} $rslt;
-    close $fdOut;
-  } else {
-    print $rslt;
-  }
+  open my $fdOut, ">" . $argOutputFile or die;
+  print {$fdOut} $rslt;
+  close $fdOut;
 }

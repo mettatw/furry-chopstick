@@ -125,21 +125,13 @@ unless (caller) { # If direct invocation of this script
 
   if ($argDepOut ne "") {
     my $rslt = dumpDep $argPrefixDep, $argFileID, $dirCache, $postfixFile;
-    if ($argDepOut ne '-') {
-      open my $fdOut, ">", $argDepOut or die;
-      print {$fdOut} $rslt;
-      close $fdOut;
-    } else {
-      print $rslt;
-    }
+    open my $fdOut, ">" . $argDepOut or die;
+    print {$fdOut} $rslt;
+    close $fdOut;
   }
 
   # Write results to target file
-  if ($argOutputFile ne '-') {
-    open my $fdOut, ">", $argOutputFile or die;
-    print {$fdOut} $rslt;
-    close $fdOut;
-  } else {
-    print $rslt;
-  }
+  open my $fdOut, ">" . $argOutputFile or die;
+  print {$fdOut} $rslt;
+  close $fdOut;
 }
