@@ -28,32 +28,6 @@ use lib dirname(realpath(__FILE__)) . '/../lib';
 use File::Spec::Functions qw(catfile);
 use Template;
 
-#my %vars = (
-#  zzz => "[% num + 3000 %]",
-#  message  => "Hello World",
-#  num => 366
-#);
-
-#my $template = Template->new({
-#    EVAL_PERL => 1
-#  });
-##my $tt = "[% PERL %]\nprint '1245\n';\n[% END %]";
-#my $tt = '[% GET message %]
-#[% TRY -%]
-#  [% PERL %]
-#    print $context->include(\$stash->get("zzz"));
-#  [% END -%]
-#[% CATCH %]
-#   ERROR! Type: [% error.type %]
-#             Info: [% error.info %]
-#   [% END -%]000';
-#my $output = "";
-
-#$template->process(\$tt, \%vars, \$output);
-#print $output . "\n";
-
-#die 1445;
-
 use Getopt::Long;
 use Data::Dumper;
 
