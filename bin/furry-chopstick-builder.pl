@@ -29,16 +29,14 @@ use File::Spec::Functions qw(catfile);
 use Template;
 
 use Getopt::Long;
-use Data::Dumper;
+
+# Needed variables
+my %hContent;
+my %hVariable;
+my %hDependency;
 
 sub main {
   my ($argPart, $argFileID, $dirCache, $postfixFile) = (@_);
-
-  # Needed variables
-  my %hContent;
-  my %hVariable;
-  my %hDependency;
-  use Data::Dumper;
 
   my $rloadCache; # Recursive function of loading a cache file
   $rloadCache = sub {
@@ -88,7 +86,19 @@ sub main {
   return $rslt;
 }
 
+sub dumpDep {
+  my ($prefixDep, $argFileID, $dirCache, $postfixFile) = (@_);
+  my @lDeps = map { "$dirCache/$_$postfixFile" } (sort keys %hContent);
+  return "$prefixDep/$argFileID: "
+  . join(' ', @lDeps) . "\n";
+}
+
 unless (caller) { # If direct invocation of this script
+  my $argDepOut = "";
+  my $argPrefixDep = "";
+  GetOptions('output-deps=s' => \$argDepOut,
+    'prefix-deps=s' => \$argPrefixDep);
+
   if (@ARGV < 4) {
     die "Usage: $0 part-name file-id input-file output-file";
   };
@@ -109,8 +119,20 @@ unless (caller) { # If direct invocation of this script
     $dirCache = $1;
     $postfixFile = $2;
   }
+  $dirCache =~ s@/$@@; # Delete trailing slash
 
   my $rslt = main $argPart, $argFileID, $dirCache, $postfixFile;
+
+  if ($argDepOut ne "") {
+    my $rslt = dumpDep $argPrefixDep, $argFileID, $dirCache, $postfixFile;
+    if ($argDepOut ne '-') {
+      open my $fdOut, ">", $argDepOut or die;
+      print {$fdOut} $rslt;
+      close $fdOut;
+    } else {
+      print $rslt;
+    }
+  }
 
   # Write results to target file
   if ($argOutputFile ne '-') {
