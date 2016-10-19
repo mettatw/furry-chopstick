@@ -15,7 +15,7 @@
 #  limitations under the License.
 #***************************************************************************
 
-export FURRYCHOP_ROOT := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
+export FURRYCHOP_ROOT := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/..
 
 CACHEDIR := .cache
 
@@ -41,14 +41,19 @@ export FURRYCHOP_BIN := $(FURRYCHOP_ROOT)/bin
 # Generate one rule for making a cache file
 # Usage: $0 file-id source-dir-abs-path list-of-parser-plugins
 define genCacheBuilderOnce
-$(CACHEDIR)/$1.cache: $2/$1 | $$(CACHEDIR)
+$(CACHEDIR)/$1.cache: $2/$1 | $(CACHEDIR)
+	@mkdir -p $$(dir $$@)
 	@$(FURRYCHOP_BIN)/furry-chopstick-parser.pl "$1" "$$<" "$$@" \
 	  $(patsubst %,-p %,$3)
+
+all-cache: $(CACHEDIR)/$1.cache
 endef
 
 # Based on wildcards, generate a bunch of cache file rules
 # Usage: $0 base-path wildcard(s) list-of-parser-plugins
+# TODO: this needs a LOT of comments....
 define genCacheBuilders
+$(foreach frag,$(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),$(eval $(call genCacheBuilderOnce,$(frag),$1,ImportDirect SeparateComment)))
 endef
 
 define buildfinal
@@ -57,6 +62,6 @@ $2/$1: $(CACHEDIR)/$1.cache | all-cache
 	@../../bin/furry-chopstick-builder.pl "$3" "$1" "$$<" "$$@" \
 	  --prefix-deps="$2" --output-deps=$(CACHEDIR)/$1.dep
 endef
-$(foreach frag,$(FRAGMENT_LIST),$(eval $(call buildfinal,$(frag),.,out:main)))
+#$(foreach frag,$(FRAGMENT_LIST),$(eval $(call buildfinal,$(frag),.,out:main)))
 
-include $(wildcard $(CACHEDIR)/**/*.dep $(CACHEDIR)/*.dep)
+#include $(wildcard $(CACHEDIR)/**/*.dep $(CACHEDIR)/*.dep)
