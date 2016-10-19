@@ -51,9 +51,9 @@ endef
 
 # Based on wildcards, generate a bunch of cache file rules
 # Usage: $0 base-path wildcard(s) list-of-parser-plugins
-# TODO: this needs a LOT of comments....
+# Basically, find all files, create a cache rule for each
 define genCacheBuilders
-$(foreach frag,$(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),$(eval $(call genCacheBuilderOnce,$(frag),$1,ImportDirect SeparateComment)))
+$(foreach frag,$(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),$(eval $(call genCacheBuilderOnce,$(frag),$1,$3)))
 endef
 
 define buildfinal
