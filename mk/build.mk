@@ -23,11 +23,17 @@ CACHEDIR := .cache
 
 .PHONY: all-cache clean
 
+all:
+	@true
+
 all-cache:
 	@true
 
-clean:
-	if [[ -n "$(CACHEDIR)" && "$(CACHEDIR)" != / && -d "$(CACHEDIR)" ]]; then rm -rf $(CACHEDIR); fi
+clean: clean-cache
+	@true
+
+clean-cache:
+	@true
 
 $(CACHEDIR):
 	mkdir -p "$@"
@@ -42,26 +48,65 @@ export FURRYCHOP_BIN := $(FURRYCHOP_ROOT)/bin
 # Usage: $0 file-id source-dir-abs-path list-of-parser-plugins
 define genCacheBuilderOnce
 $(CACHEDIR)/$1.cache: $2/$1 | $(CACHEDIR)
+	@printf '\033[;36m cache %s\033[m\n' "$$@"
 	@mkdir -p $$(dir $$@)
 	@$(FURRYCHOP_BIN)/furry-chopstick-parser.pl "$1" "$$<" "$$@" \
 	  $(patsubst %,-p %,$3)
+deletecache!$(CACHEDIR)/$1.cache:
+	@rm -f "$(CACHEDIR)/$1.cache"
 
 all-cache: $(CACHEDIR)/$1.cache
+clean-cache: deletecache!$(CACHEDIR)/$1.cache
 endef
 
 # Based on wildcards, generate a bunch of cache file rules
 # Usage: $0 base-path wildcard(s) list-of-parser-plugins
 # Basically, find all files, create a cache rule for each
 define genCacheBuilders
-$(foreach frag,$(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),$(eval $(call genCacheBuilderOnce,$(frag),$1,$3)))
+$(foreach frag,\
+  $(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),\
+  $(eval \
+    $(call genCacheBuilderOnce,$(frag),$1,$3)
+  )\
+)
 endef
 
-define buildfinal
+# ====== Builder for the final script ======
+
+# Generate one rule for making a final script
+# Usage: $0 file-id dest-path part
+define genBuilderOnce
 $2/$1: $(CACHEDIR)/$1.cache | all-cache
-	@printf '\033[;32m build %s\033[m\n' "$1"
-	@../../bin/furry-chopstick-builder.pl "$3" "$1" "$$<" "$$@" \
+	@printf '\033[;32m build %s\033[m\n' "$$@"
+	@mkdir -p $$(dir $$@)
+	@$(FURRYCHOP_BIN)/furry-chopstick-builder.pl "$3" "$1" "$$<" "$$@" \
 	  --prefix-deps="$2" --output-deps=$(CACHEDIR)/$1.dep
-endef
-#$(foreach frag,$(FRAGMENT_LIST),$(eval $(call buildfinal,$(frag),.,out:main)))
+delete!$2/$1:
+	@rm -f "$2/$1"
 
-#include $(wildcard $(CACHEDIR)/**/*.dep $(CACHEDIR)/*.dep)
+all: $2/$1
+clean: delete!$2/$1
+endef
+
+# Based on wildcards, generate build rules
+# Usage: $0 base-path wildcard(s) dest-path part
+define genBuilders
+$(foreach frag,\
+  $(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),\
+  $(eval \
+    $(call genBuilderOnce,$(frag),$3,$4)
+  )\
+)
+endef
+
+# Build two things at once
+# Usage: $0 base-path wildcard(s) dest-path part plugin-list
+define genBuildersWithCache
+$(foreach frag,\
+  $(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),\
+  $(eval \
+    $(call genCacheBuilderOnce,$(frag),$1,$5)
+    $(call genBuilderOnce,$(frag),$3,$4)
+  )\
+)
+endef
