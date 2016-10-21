@@ -1,4 +1,4 @@
-## The main script ends here ##
+##- End Main Script ##
 
 else
 
