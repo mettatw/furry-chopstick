@@ -47,7 +47,7 @@ sub doParse {
         . "[% insertPt = 'out:$nameUnit' %]"
         . "[% txt.\$insertFn.\$insertPt %]";
       } else {
-        $rslt = "[% INCLUDE $fname:out:$nameUnit %]";
+        $rslt = "[% INCLUDE '$fname:out:$nameUnit' %]";
       }
 
       substr($rhContent->{$key}, $-[0], $+[0]-$-[0], $rslt);
