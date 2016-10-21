@@ -1,5 +1,3 @@
-##- End Main Script ##
-
 else
 
 # Other things bundled inside this script
