@@ -38,7 +38,6 @@ clean-cache:
 $(CACHEDIR):
 	@mkdir -p "$@"
 
-
 # ====== Builder for cache builder ======
 
 # There might be chances to overwrite this var...
@@ -69,6 +68,11 @@ $(foreach frag,\
   )\
 )
 endef
+
+# By default, templates from furry-chopstick are included
+$(call genCacheBuilders,$(FURRYCHOP_ROOT),tmpl/**/*.sh,\
+  SeparateComment ImportShell ImportDirect)
+
 
 # ====== Builder for the final script ======
 
@@ -109,3 +113,6 @@ $(foreach frag,\
   )\
 )
 endef
+
+# ====== Misc ======
+
