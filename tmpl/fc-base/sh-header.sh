@@ -8,4 +8,3 @@ set -euo pipefail
 if [[ ${FC_IN_HEADER_NOW:-0} == 0 ]]; then
   FC_IN_HEADER_NOW=1
   source "$0"
-

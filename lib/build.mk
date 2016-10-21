@@ -17,7 +17,7 @@
 
 export FURRYCHOP_ROOT := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/..
 
-CACHEDIR := .cache
+CACHEDIR ?= .cache
 
 # ====== Common targets ======
 
@@ -37,6 +37,9 @@ clean-cache:
 
 $(CACHEDIR):
 	@mkdir -p "$@"
+
+# Get dep files, to determine when to rebuild
+-include $(shell find $(CACHEDIR) -type f -name '*.dep' -print)
 
 # ====== Builder for cache builder ======
 
@@ -71,7 +74,7 @@ endef
 
 # By default, templates from furry-chopstick are included
 $(call genCacheBuilders,$(FURRYCHOP_ROOT),tmpl/**/*.sh,\
-  SeparateComment ImportShell ImportDirect)
+  ImportShell ImportDirect)
 
 
 # ====== Builder for the final script ======
