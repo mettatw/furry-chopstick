@@ -46,6 +46,9 @@ sub main {
   $hContent{'text:main'} = $argInput;
   $hContent{'out:main'} = "[% INCLUDE '$argFileID:text:main' %]";
 
+  # Record file ID
+  $hVariable{'fileid'} = $argFileID;
+
   foreach my $parser (@argParsers) {
     require "FurryParser/$parser.pm";
     # Call function with this name, weird syntax due to use strict

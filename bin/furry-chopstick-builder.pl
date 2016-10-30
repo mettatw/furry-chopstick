@@ -78,6 +78,7 @@ sub main {
 
   # Really evaluate the template now
   $oTmpl->process(\$input, {
+      fileid => $argFileID,
       txt => \%hContent,
       deps => \%hDependency,
       dataAll => \%hVariable,
