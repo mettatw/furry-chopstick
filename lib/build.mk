@@ -39,7 +39,7 @@ $(CACHEDIR):
 	@mkdir -p "$@"
 
 # Get dep files, to determine when to rebuild
--include $(shell find $(CACHEDIR) -type f -name '*.dep' -print)
+-include $(shell test -d $(CACHEDIR) && find $(CACHEDIR) -type f -name '*.dep' -print)
 
 # ====== Builder for cache builder ======
 
@@ -51,6 +51,7 @@ export FURRYCHOP_BIN := $(FURRYCHOP_ROOT)/bin
 define genCacheBuilderOnce
 $(CACHEDIR)/$1.cache: $2/$1 | $(CACHEDIR)
 	@printf '\033[;36m parse %s\033[m\n' "$$@"
+	@mkdir -p $$(dir $$@)
 	@$(FURRYCHOP_BIN)/furry-chopstick-parser.pl "$1" "$$<" "$$@" \
 	  $(patsubst %,-p %,$3)
 deletecache!$(CACHEDIR)/$1.cache:
@@ -73,8 +74,10 @@ $(foreach frag,\
 endef
 
 # By default, templates from furry-chopstick are included
+ifndef FURRYCHOP_NOBUILTIN
 $(call genCacheBuilders,$(FURRYCHOP_ROOT),tmpl/**/*.sh,\
   ImportShell ImportDirect)
+endif
 
 
 # ====== Builder for the final script ======
