@@ -22,12 +22,6 @@ use strict;
 use warnings;
 use v5.14;
 
-my $pat = qr{
-  (?: \s | ^ ) \K    # look-behind non-capture, start without non-space
-  ! ([<>]) ([^\s;:]+)     # The command we want
-  (?: (?= [\s;:] | $ ))  # look-ahead the end of command
-}msx; # x allow comment; s treat as single line; m multiline
-
 sub doParse {
   my ($rhContent, $rhVariable, $rhDependency) = (@_);
   foreach my $key (grep { $_ =~ /^text:/ } keys %{$rhContent}) {
