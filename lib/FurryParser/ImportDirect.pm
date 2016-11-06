@@ -30,7 +30,7 @@ use v5.14;
 
 my $pat = qr{
   (?: \s | ^ ) \K    # look-behind non-capture, start without non-space
-  ! ([<>]) ([^\s;:]+)     # The command we want
+  ([ ]{2,})? ! ([<>]) ([^\s;:]+)     # The command we want
   (?: (?= [\s;:] | $ ))  # look-ahead the end of command
 }msx; # x allow comment; s treat as single line; m multiline
 
@@ -39,17 +39,22 @@ sub doParse {
   foreach my $key (grep { $_ =~ /^text:/ } keys %{$rhContent}) {
     my $nameUnit = (split(/:/, $key, 2))[1];
     while ($rhContent->{$key} =~ /$pat/g) {
-      my $symbol = $1;
-      my $fname = $2;
+      my $indent = $1;
+      my $symbol = $2;
+      my $fname = $3;
       my $rslt = "";
       if ($symbol eq "<") {
         $rslt = "[% insertFn = '$fname' %]"
         # We use text:xxx here since out:xxx contains a template, but we're importing raw text
         . "[% insertPt = 'text:$nameUnit' %]"
-        . "[% txt.\$insertFn.\$insertPt %]";
+        . "[% txt.\$insertFn.\$insertPt";
       } else {
-        $rslt = "[% INCLUDE '$fname:out:$nameUnit' %]";
+        $rslt = "[% INCLUDE '$fname:out:$nameUnit'";
       }
+      if (defined $indent) {
+        $rslt .= " FILTER indent('$indent')";
+      }
+      $rslt .= " %]";
 
       substr($rhContent->{$key}, $-[0], $+[0]-$-[0], $rslt);
       $rhDependency->{$fname} = 1;
