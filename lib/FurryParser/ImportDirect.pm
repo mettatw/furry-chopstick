@@ -44,7 +44,8 @@ sub doParse {
       my $rslt = "";
       if ($symbol eq "<") {
         $rslt = "[% insertFn = '$fname' %]"
-        . "[% insertPt = 'out:$nameUnit' %]"
+        # We use text:xxx here since out:xxx contains a template, but we're importing raw text
+        . "[% insertPt = 'text:$nameUnit' %]"
         . "[% txt.\$insertFn.\$insertPt %]";
       } else {
         $rslt = "[% INCLUDE '$fname:out:$nameUnit' %]";
