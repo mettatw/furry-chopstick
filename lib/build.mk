@@ -50,7 +50,6 @@ export FURRYCHOP_BIN := $(FURRYCHOP_ROOT)/bin
 # Usage: $0 file-id source-dir-abs-path list-of-parser-plugins
 define genCacheBuilderOnce
 $(CACHEDIR)/$1.cache: $2/$1 | $(CACHEDIR)
-	@printf '\033[;36m parse %s\033[m\n' "$$@"
 	@mkdir -p $$(dir $$@)
 	@$(FURRYCHOP_BIN)/furry-chopstick-parser.pl "$1" "$$<" "$$@" \
 	  $(patsubst %,-p %,$3)
