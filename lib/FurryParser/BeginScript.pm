@@ -39,7 +39,7 @@ sub doParse {
   foreach my $key (grep { $_ =~ /^text:/ } keys %{$rhContent}) {
     my $nameUnit = (split(/:/, $key, 2))[1];
     if ($rhContent->{$key} =~ /$pat/) {
-      my $rslt = "##- Begin Main Script ##" . "\n";
+      my $rslt = "##- Begin Main Script ##";
       if ($1 eq "script") {
         $rslt = "!>tmpl/fc-base/sh-beforemain.sh\n$rslt";
       }
