@@ -29,9 +29,9 @@ use v5.14;
 # !@begin-source
 
 my $pat = qr{
-  (?: [\n\r] | ^ ) \s* \K    # look-behind non-capture, start with new line
+  (?: [\n\r] | ^ ) [ ]* \K    # look-behind non-capture, start with new line
   !\@begin-(script|source)     # The command we want
-  \s* (?: (?= [\n\r] | $ ))  # look-ahead the end of command
+  [ ]* (?: (?= [\n\r] | $ ))  # look-ahead the end of command
 }msx; # x allow comment; s treat as single line; m multiline
 
 sub doParse {
