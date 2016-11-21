@@ -39,11 +39,13 @@ sub doParse {
   foreach my $key (grep { $_ =~ /^text:/ } keys %{$rhContent}) {
     my $nameUnit = (split(/:/, $key, 2))[1];
     if ($rhContent->{$key} =~ /$pat/) {
+      my $startBlock = $-[0];
+      my $lenBlock = $+[0]-$-[0];
       my $rslt = "##- Begin Main Script ##";
       if ($1 eq "script") {
         $rslt = "!>tmpl/fc-base/sh-beforemain.sh\n$rslt";
       }
-      substr($rhContent->{$key}, $-[0], $+[0]-$-[0], $rslt);
+      substr($rhContent->{$key}, $startBlock, $lenBlock, $rslt);
 
       # Prepend and Append template files
       $rhContent->{$key} = "!>tmpl/fc-base/sh-header.sh" . "\n"

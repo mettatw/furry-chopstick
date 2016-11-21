@@ -42,6 +42,9 @@ sub doParse {
       my $indent = $1;
       my $symbol = $2;
       my $fname = $3;
+      my $startBlock = $-[0];
+      my $lenBlock = $+[0]-$-[0];
+
       my $rslt = "";
       if ($symbol eq "<") {
         $rslt = "[% insertFn = '$fname' %]"
@@ -56,7 +59,7 @@ sub doParse {
       }
       $rslt .= " %]";
 
-      substr($rhContent->{$key}, $-[0], $+[0]-$-[0], $rslt);
+      substr($rhContent->{$key}, $startBlock, $lenBlock, $rslt);
       $rhDependency->{$fname} = 1;
     }
   }

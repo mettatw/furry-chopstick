@@ -41,13 +41,16 @@ sub doParse {
     while ($rhContent->{$key} =~ /$pat/g) {
       my $symbol = $1;
       my $fname = $2;
+      my $startBlock = $-[0];
+      my $lenBlock = $+[0]-$-[0];
+
       my $rslt = "";
       if ($symbol eq ".") {
         $rslt = "<(~GET!$fname)"
       } else {
         $rslt = "declare -f \"~GET!$fname\"";
       }
-      substr($rhContent->{$key}, $-[0], $+[0]-$-[0], $rslt);
+      substr($rhContent->{$key}, $startBlock, $lenBlock, $rslt);
 
       $rhDependency->{$fname} = 1;
       $rhVariable->{'toImport'}{$fname} = 1;
