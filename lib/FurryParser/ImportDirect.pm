@@ -49,10 +49,10 @@ sub doParse {
         . "[% insertPt = 'text:$nameUnit' %]"
         . "[% txt.\$insertFn.\$insertPt";
       } else {
-        $rslt = "[% PROCESS '$fname:out:$nameUnit'";
+        $rslt = "[% PROCESS '$fname:out:$nameUnit' | trim";
       }
       if (defined $indent) {
-        $rslt .= " FILTER indent('$indent')";
+        $rslt .= " | indent('$indent')";
       }
       $rslt .= " %]";
 
