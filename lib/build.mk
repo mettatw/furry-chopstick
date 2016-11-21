@@ -82,39 +82,40 @@ endif
 # ====== Builder for the final script ======
 
 # Generate one rule for making a final script
-# Usage: $0 file-id dest-path part
+# Usage: $0 1:file-id 2:dest-path 3:part [4:dest-name]
 define genBuilderOnce
-$2/$1: $(CACHEDIR)/$1.cache | all-cache
+$2/$(if $4,$4,$1): $(CACHEDIR)/$1.cache | all-cache
 	@printf '\033[;32m build %s\033[m\n' "$$@"
 	@mkdir -p $$(dir $$@)
 	@$(FURRYCHOP_BIN)/furry-chopstick-builder.pl "$3" "$1" "$$<" "$$@" \
 	  --prefix-deps="$2" --output-deps=$(CACHEDIR)/$1.dep
-delete!$2/$1:
-	@rm -f "$2/$1"
+delete!$2/$(if $4,$4,$1):
+	@rm -f "$$(@:delete!%=%)"
 
-all: $2/$1
-clean: delete!$2/$1
+all: $2/$(if $4,$4,$1)
+clean: delete!$2/$(if $4,$4,$1)
 endef
 
 # Based on wildcards, generate build rules
-# Usage: $0 base-path wildcard(s) dest-path part
+# Usage: $0 1:base-path 2:wildcard(s) 3:dest-path 4:part [5:dest-rule]
 define genBuilders
 $(foreach frag,\
   $(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),\
   $(eval \
-    $(call genBuilderOnce,$(frag),$3,$4)
+    $(call genBuilderOnce,$(frag),$3,$4,$5)
   )\
 )
 endef
 
 # Build two things at once
-# Usage: $0 base-path wildcard(s) dest-path part plugin-list
+# Usage: $0 1:base-path 2:wildcard(s) 3:dest-path 4:part 5:plugin-list [6:dest-rule]
+# Note: when specifying $6, you need to escape. e.g. $$(frag)
 define genBuildersWithCache
 $(foreach frag,\
   $(patsubst $1/%,%,$(wildcard $(patsubst %,$1/%,$2))),\
   $(eval \
     $(call genCacheBuilderOnce,$(frag),$1,$5)
-    $(call genBuilderOnce,$(frag),$3,$4)
+    $(call genBuilderOnce,$(frag),$3,$4,$6)
   )\
 )
 endef
