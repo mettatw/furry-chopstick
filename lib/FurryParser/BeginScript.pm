@@ -25,10 +25,12 @@ use v5.14;
 # Pattern
 # After args definition, before main script:
 # !@begin-script
+# In the beginning of a sourced file:
+# !@begin-source
 
 my $pat = qr{
   (?: [\n\r] | ^ ) \s* \K    # look-behind non-capture, start with new line
-  !\@begin-script     # The command we want
+  !\@begin-(script|source)     # The command we want
   \s* (?: (?= [\n\r] | $ ))  # look-ahead the end of command
 }msx; # x allow comment; s treat as single line; m multiline
 
@@ -37,8 +39,10 @@ sub doParse {
   foreach my $key (grep { $_ =~ /^text:/ } keys %{$rhContent}) {
     my $nameUnit = (split(/:/, $key, 2))[1];
     if ($rhContent->{$key} =~ /$pat/) {
-      my $rslt = "!>tmpl/fc-base/sh-beforemain.sh" . "\n"
-      . "##- Begin Main Script ##" . "\n";
+      my $rslt = "##- Begin Main Script ##" . "\n";
+      if ($1 eq "script") {
+        $rslt = "!>tmpl/fc-base/sh-beforemain.sh\n$rslt";
+      }
       substr($rhContent->{$key}, $-[0], $+[0]-$-[0], $rslt);
 
       # Prepend and Append template files
