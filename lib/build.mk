@@ -88,7 +88,7 @@ $2/$(if $4,$4,$1): $(CACHEDIR)/$1.cache | all-cache
 	@printf '\033[;32m build %s\033[m\n' "$$@"
 	@mkdir -p $$(dir $$@)
 	@$(FURRYCHOP_BIN)/furry-chopstick-builder.pl "$3" "$1" "$$<" "$$@" \
-	  --prefix-deps="$2" --output-deps=$(CACHEDIR)/$1.dep
+	  --output-deps=$(CACHEDIR)/$1.dep
 delete!$2/$(if $4,$4,$1):
 	@rm -f "$$(@:delete!%=%)"
 

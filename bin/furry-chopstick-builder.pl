@@ -88,17 +88,15 @@ sub main {
 }
 
 sub dumpDep {
-  my ($prefixDep, $argFileID, $dirCache, $postfixFile) = (@_);
+  my ($fileOutput, $dirCache, $postfixFile) = (@_);
   my @lDeps = map { "$dirCache/$_$postfixFile" } (sort keys %hContent);
-  return "$prefixDep/$argFileID: "
+  return "$fileOutput: "
   . join(' ', @lDeps) . "\n";
 }
 
 unless (caller) { # If direct invocation of this script
   my $argDepOut = "";
-  my $argPrefixDep = "";
-  GetOptions('output-deps=s' => \$argDepOut,
-    'prefix-deps=s' => \$argPrefixDep);
+  GetOptions('output-deps=s' => \$argDepOut);
 
   if (@ARGV < 4) {
     die "Usage: $0 part-name file-id input-file output-file";
@@ -125,7 +123,7 @@ unless (caller) { # If direct invocation of this script
   my $rslt = main $argPart, $argFileID, $dirCache, $postfixFile;
 
   if ($argDepOut ne "") {
-    my $rslt = dumpDep $argPrefixDep, $argFileID, $dirCache, $postfixFile;
+    my $rslt = dumpDep $argOutputFile, $dirCache, $postfixFile;
     open my $fdOut, ">" . $argDepOut or die;
     print {$fdOut} $rslt;
     close $fdOut;
