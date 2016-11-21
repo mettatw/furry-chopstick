@@ -44,7 +44,7 @@ sub main {
   my %hDependency;
 
   $hContent{'text:main'} = $argInput;
-  $hContent{'out:main'} = "[% INCLUDE '$argFileID:text:main' %]";
+  $hContent{'out:main'} = "[% PROCESS '$argFileID:text:main' %]";
 
   # Special rule: if name ends with .pl, but no tags, add the tag
   if ($argFileID =~ /\.pl$/) {
