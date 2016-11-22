@@ -1,1 +1,1 @@
-source !.tmpl/fc-base/parseopts.sh
+source !../parseopts.sh

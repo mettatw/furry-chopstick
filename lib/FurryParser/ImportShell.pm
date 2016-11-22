@@ -44,6 +44,13 @@ sub doParse {
       my $startBlock = $-[0];
       my $lenBlock = $+[0]-$-[0];
 
+      # concat original path if relative
+      if ($fname =~ /^(\.|\.\.)\//) {
+        $fname = ($rhVariable->{'fileid'} =~ s@[^/]+$@@r) . "$fname";
+      }
+      $fname =~ s@/\+@/@g; # clear repeating slashes
+      1 while $fname =~ s@(^|/)([^/]+[^/.]/\.\./|\./)@$1@; # deal with . and ..
+
       my $rslt = "";
       if ($symbol eq ".") {
         $rslt = "<(~GET!$fname)"
