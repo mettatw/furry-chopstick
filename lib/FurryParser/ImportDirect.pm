@@ -27,10 +27,12 @@ use v5.14;
 # !>template/path
 # Import template but don't evaluate: (pull text IN)
 # !<template/path
+# Add content of a macro: (variable)
+# !$template/path
 
 my $pat = qr{
   (?: \s | ^ ) \K    # look-behind non-capture, start without non-space
-  ([ ]{2,})? ! ([<>]) ([^\s;:]+)     # The command we want
+  ([ ]{2,})? ! ([<>] | \$\$) ([^\s;:]+)     # The command we want
   (?: (?= [\s;:] | $ ))  # look-ahead the end of command
 }msx; # x allow comment; s treat as single line; m multiline
 
@@ -58,16 +60,22 @@ sub doParse {
         # We use text:xxx here since out:xxx contains a template, but we're importing raw text
         . "[% insertPt = 'text:$nameUnit' %]"
         . "[% txt.\$insertFn.\$insertPt";
-      } else {
+      } elsif ($symbol eq ">") {
         $rslt = "[% PROCESS '$fname:out:$nameUnit' | trim";
+      } elsif ($symbol eq '$$') {
+        # Delete one level of indenting
+        $rslt = "[% $fname | remove('^  ') | replace(\"\\n  \", \"\\n\") | trim";
       }
+
       if (defined $indent) {
         $rslt .= " | indent('$indent')";
       }
       $rslt .= " %]";
 
       substr($rhContent->{$key}, $startBlock, $lenBlock, $rslt);
-      $rhDependency->{$fname} = 1;
+      if ($symbol eq "<" or $symbol eq ">") {
+        $rhDependency->{$fname} = 1;
+      }
     }
   }
 }
