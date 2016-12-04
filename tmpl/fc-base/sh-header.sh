@@ -10,3 +10,4 @@ fi
 if [[ ${FC_IN_HEADER_NOW:-0} == 0 ]]; then
 FC_IN_HEADER_NOW=1
 source "${BASH_SOURCE[0]}"
+unset FC_IN_HEADER_NOW
