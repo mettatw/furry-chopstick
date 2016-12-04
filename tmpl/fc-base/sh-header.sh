@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # This script is automatically transpiled by furry-chopstick
 # https://github.com/mettatw/furry-chopstick
 if [[ "${BASH_SOURCE[0]-}" == "$0" ]]; then
