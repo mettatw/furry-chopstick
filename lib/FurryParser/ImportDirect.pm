@@ -27,12 +27,12 @@ use v5.14;
 # !>template/path
 # Import template but don't evaluate: (pull text IN)
 # !<template/path
-# Add content of a macro: (variable)
-# !$template/path
+# Add content of a block: (variable)
+# !%template/path
 
 my $pat = qr{
   (?: \s | ^ ) \K    # look-behind non-capture, start without non-space
-  ([ ]{2,})? ! ([<>] | \$\$) ([^\s;:]+)     # The command we want
+  ([ ]{2,})? ! ([<>%] | \$\$) ([^\s;]+)     # The command we want
   (?: (?= [\s;:] | $ ))  # look-ahead the end of command
 }msx; # x allow comment; s treat as single line; m multiline
 
@@ -54,14 +54,26 @@ sub doParse {
       $fname =~ s@/\+@/@g; # clear repeating slashes
       1 while $fname =~ s@(^|/)([^/]+[^/.]/\.\./|\./)@$1@; # deal with . and ..
 
+      # If have specified what part to import...
+      my $unitspec = $fname;
+      if ($fname =~ /:[^:]+:[^:]+$/) {
+        # Delete the part, only annotate file name
+        $fname =~ s/:[^:]+:[^:]+$//;
+      } else {
+        $unitspec = "$fname:out:main";
+      }
+
       my $rslt = "";
       if ($symbol eq "<") {
         $rslt = "[% insertFn = '$fname' %]"
         # We use text:xxx here since out:xxx contains a template, but we're importing raw text
-        . "[% insertPt = 'text:$nameUnit' %]"
+        . "[% insertPt = 'text:main' %]"
         . "[% txt.\$insertFn.\$insertPt";
       } elsif ($symbol eq ">") {
-        $rslt = "[% PROCESS '$fname:out:$nameUnit' | trim";
+        $rslt = "[% PROCESS '$unitspec' | trim";
+      } elsif ($symbol eq '%') {
+        # Delete one level of indenting
+        $rslt = "[% PROCESS '$fname' | remove('^  ') | replace(\"\\n  \", \"\\n\") | trim";
       } elsif ($symbol eq '$$') {
         # Delete one level of indenting
         $rslt = "[% $fname | remove('^  ') | replace(\"\\n  \", \"\\n\") | trim";
