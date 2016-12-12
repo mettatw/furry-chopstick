@@ -89,6 +89,7 @@ $2/$(if $4,$4,$1): $(CACHEDIR)/$1.cache | all-cache
 	@mkdir -p $$(dir $$@)
 	@$(FURRYCHOP_BIN)/furry-chopstick-builder.pl "$3" "$1" "$$<" "$$@" \
 	  --output-deps=$(CACHEDIR)/$1.dep
+	@awk 'NR==1 && /^Error: / {print; exit 1}' "$$@"
 delete!$2/$(if $4,$4,$1):
 	@rm -f "$$(@:delete!%=%)"
 
