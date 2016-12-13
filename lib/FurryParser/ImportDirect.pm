@@ -32,7 +32,7 @@ use v5.14;
 
 my $pat = qr{
   (?: \s | ^ ) \K    # look-behind non-capture, start without non-space
-  ([ ]{2,})? ! ([<>%] | \$\$) ([^\s;]+)     # The command we want
+  ([ ]{2,})? ! ([<>%]) ([^\s;]+)     # The command we want
   (?: (?= [\s;:] | $ ))  # look-ahead the end of command
 }msx; # x allow comment; s treat as single line; m multiline
 
@@ -74,9 +74,6 @@ sub doParse {
       } elsif ($symbol eq '%') {
         # Delete one level of indenting
         $rslt = "[% PROCESS '$fname' | remove('^  ') | replace(\"\\n  \", \"\\n\") | trim";
-      } elsif ($symbol eq '$$') {
-        # Delete one level of indenting
-        $rslt = "[% $fname | remove('^  ') | replace(\"\\n  \", \"\\n\") | trim";
       }
 
       if (defined $indent) {
