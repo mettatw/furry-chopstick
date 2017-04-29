@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/release/mettatw/furry-chopstick.svg)](https://github.com/mettatw/furry-chopstick/releases/latest)
 [![Issues](https://img.shields.io/github/issues-raw/mettatw/furry-chopstick.svg)](https://github.com/mettatw/furry-chopstick/issues)
 
-A pretty weird and inconvenient code-generation helper based on Template Toolkit and perl. Define a custom annotation, translate it into Template Toolkit template, then use that template to generate code.
+A pretty weird, inefficient and inconvenient code-generation helper based on Template Toolkit and perl. Define a custom annotation, translate it into Template Toolkit template, then use that template to generate code.
 
 ## Installation
 
@@ -16,7 +16,7 @@ cd furry-chopstick
 git submodule update --init --recursive
 ```
 
-Currently, unless you want to run the test suite, you can ignore `cpanfile`. This may change later...
+Currently, unless you want to run the test suite, you can ignore `cpanfile`.
 
 ## Basic Usage
 
@@ -24,7 +24,8 @@ Currently, unless you want to run the test suite, you can ignore `cpanfile`. Thi
 
 ## Trivia
 
-- The original intention of this library is to generate some installation scripts for my linux box. Thus the choice of perl and git-cloneable template library, in order to make it work on most linux distros out-of-box.
+- The original intention of this project is to generate some installation scripts for my linux box. Thus the choice of perl and git-cloneable template library, in order to make it work on most linux distros out-of-box.
+- This project is originally refactored out from another project called "furry-spoon", hence its name. Furry-spoon is abandoned.
 
 ## See Also
 
