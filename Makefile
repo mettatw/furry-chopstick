@@ -23,4 +23,5 @@ export PERL5LIB := $(PERL5LIB):$(FC_ROOTDIR)/local/lib/perl5
 .PHONY: test
 test:
 	@perl test/parser.pl
+	@perl test/parser-DirectImport.pl
 

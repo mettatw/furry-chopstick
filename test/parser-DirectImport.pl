@@ -34,23 +34,44 @@ sub evalMain {
   return (\%hContent, \%hVariable, \%hDependency);
 }
 
-describe 'The parser program' => sub {
-  tests 'Passthru' => sub {
-    my $input = "ccc\n567\n";
+describe 'DirectImport plugin' => sub {
+
+  tests 'DirectImport plugin' => sub {
+    my $input;
     my @rslt;
 
-    @rslt = evalMain('name', $input, []);
-    is($rslt[0]->{'name'}{'text:main'},
-      $input, 'match passthru');
 
-    @rslt = evalMain('name', "", []);
-    is($rslt[0]->{'name'}{'text:main'},
-      "", 'match passthru empty');
+    $input = "ccc\n!<00/33\nddd";
+    @rslt = evalMain('name', $input, ['ImportDirect']);
+    like($rslt[0]->{'name'}{'text:main'},
+      qr/ccc\n\[%.*%\]\nddd/, '< Keep context');
 
-    ok(dies {
-      my @rslt = evalMain('name', $input, ['NonExist']);
-    }, 'die on not found');
+    is($rslt[2]->{'name'}{'00/33'},
+      1, '< Annotate import');
+
+
+    $input = "ccc\n!>00/33\nddd";
+    @rslt = evalMain('name', $input, ['ImportDirect']);
+    like($rslt[0]->{'name'}{'text:main'},
+      qr/ccc\n\[%.*%\]\nddd/, '> Keep context');
+
+    is($rslt[2]->{'name'}{'00/33'},
+      1, '> Annotate import');
+
+
+    $input = "a !>00/33;";
+    @rslt = evalMain('name', $input, ['ImportDirect']);
+    like($rslt[0]->{'name'}{'text:main'},
+      qr/a \[%.*%\];/, 'detected with space and semicolon');
+
+    isnt($rslt[2]->{'name'}{'00/33;'},
+      1, 'rejected semicolon');
+
+    is($rslt[2]->{'name'}{'00/33'},
+      1, 'correct filename without semicolon');
+
   };
+
 };
 
 done_testing;
