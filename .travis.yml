@@ -1,0 +1,5 @@
+language: perl
+perl:
+  - "5.24.1" # my env
+  - "5.20"
+  - "5.14.2" # ubuntu 12.04
