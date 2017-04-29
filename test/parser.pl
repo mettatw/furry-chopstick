@@ -39,6 +39,7 @@ describe 'The parser program' => sub {
     my $input = "ccc\n567\n";
     my @rslt;
 
+    input = "ccc\n567\n";
     @rslt = evalMain('name', $input, []);
     is($rslt[0]->{'name'}{'text:main'},
       $input, 'match passthru');
@@ -53,15 +54,18 @@ describe 'The parser program' => sub {
   };
 
   tests 'DirectImport plugin' => sub {
-    my $input = "ccc\n!<00/33\nddd";
+    my $input;
     my @rslt;
 
+
+    $input = "ccc\n!<00/33\nddd";
     @rslt = evalMain('name', $input, ['ImportDirect']);
     like($rslt[0]->{'name'}{'text:main'},
       qr/ccc\n\[%.*%\]\nddd/, '< Keep context');
 
     is($rslt[2]->{'name'}{'00/33'},
       1, '< Annotate import');
+
 
     $input = "ccc\n!>00/33\nddd";
     @rslt = evalMain('name', $input, ['ImportDirect']);
@@ -70,6 +74,7 @@ describe 'The parser program' => sub {
 
     is($rslt[2]->{'name'}{'00/33'},
       1, '> Annotate import');
+
 
     $input = "a !>00/33;";
     @rslt = evalMain('name', $input, ['ImportDirect']);
