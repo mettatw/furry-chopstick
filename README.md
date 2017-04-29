@@ -1,8 +1,9 @@
 # furry-chopstick
 
-[![Build Status](https://travis-ci.org/mettatw/furry-chopstick.svg?branch=master)](https://travis-ci.org/mettatw/furry-chopstick)
+[![License](https://img.shields.io/github/license/mettatw/furry-chopstick.svg)](https://github.com/mettatw/Quaggan/blob/master/LICENSE)
 [![Release](https://img.shields.io/github/release/mettatw/furry-chopstick.svg)](https://github.com/mettatw/furry-chopstick/releases/latest)
 [![Issues](https://img.shields.io/github/issues-raw/mettatw/furry-chopstick.svg)](https://github.com/mettatw/furry-chopstick/issues)
+[![Build Status](https://travis-ci.org/mettatw/furry-chopstick.svg?branch=master)](https://travis-ci.org/mettatw/furry-chopstick)
 
 A pretty weird, inefficient and inconvenient code-generation helper based on Template Toolkit and perl, with main focus on shell scripts. Define a custom annotation, translate it into Template Toolkit template, then use that template to generate code.
 
